@@ -1,0 +1,213 @@
+{
+  "openapi" : "3.0.0",
+  "servers" : [ {
+    "url" : "https://qaeservices1.capetown.gov.za/coct/api"
+  } ],
+  "info" : {
+    "description" : "This is a example API for Service Request.",
+    "version" : "1.0.0",
+    "title" : "Service Request Info API",
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "tags" : [ {
+    "name" : "3rd_parties"
+  }, {
+    "name" : "media"
+  } ],
+  "paths" : {
+    "/service-request/status/" : {
+      "get" : {
+        "tags" : [ "3rd_parties" ],
+        "summary" : "Get service request API Info",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "service_request_no",
+          "description" : "maximum number of records to return",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "minimum" : 0,
+            "maximum" : 9
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ServiceRequestSchema"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          },
+          "404" : {
+            "description" : "Page Not Found"
+          },
+          "500" : {
+            "description" : "Internal Server Error"
+          },
+          "502" : {
+            "description" : "Bad Gateway Error"
+          },
+          "503" : {
+            "description" : "Service Unavailable Error"
+          }
+        }
+      }
+    },
+    "/service-request/stats/" : {
+      "get" : {
+        "tags" : [ "3rd_parties" ],
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "area",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "type_identifier",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/AreaSchema"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          },
+          "404" : {
+            "description" : "Page Not Found"
+          },
+          "500" : {
+            "description" : "Internal Server Error"
+          },
+          "502" : {
+            "description" : "Bad Gateway Error"
+          },
+          "503" : {
+            "description" : "Service Unavailable Error"
+          }
+        }
+      }
+    },
+    "/service-request/image_placeholder/" : {
+      "get" : {
+        "tags" : [ "media" ],
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "labels",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ImageRecognitionSchema"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "ServiceRequestSchema" : {
+        "type" : "object",
+        "required" : [ "id", "sr_status", "type", "suburb" ],
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid",
+            "example" : "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "sr_status" : {
+            "type" : "string",
+            "example" : 987654567
+          },
+          "type" : {
+            "type" : "string"
+          },
+          "suburb" : {
+            "type" : "string"
+          }
+        }
+      },
+      "AreaSchema" : {
+        "required" : [ "area_stats" ],
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          }
+        }
+      },
+      "StatsSchema" : {
+        "required" : [ "count", "open", "duration_p50", "heatmap_link", "last_updated" ],
+        "properties" : {
+          "count" : {
+            "type" : "integer"
+          },
+          "open" : {
+            "type" : "integer"
+          },
+          "duration_p50" : {
+            "type" : "integer"
+          },
+          "heatmap_link" : {
+            "type" : "string"
+          },
+          "last_updated" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "ImageRecognitionSchema" : {
+        "required" : [ "url" ],
+        "properties" : {
+          "url" : {
+            "type" : "array"
+          }
+        }
+      }
+    }
+  }
+}
