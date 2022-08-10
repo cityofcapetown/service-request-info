@@ -1,8 +1,5 @@
 {
   "openapi" : "3.0.0",
-  "servers" : [ {
-    "url" : "https://qaeservices1.capetown.gov.za/coct/api"
-  } ],
   "info" : {
     "description" : "This is a example API for Service Request.",
     "version" : "1.0.0",
