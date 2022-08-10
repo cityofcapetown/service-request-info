@@ -112,7 +112,7 @@
         }
       }
     },
-    "/service-request/image_placeholder/" : {
+    "/service-request/image_classification/" : {
       "get" : {
         "tags" : [ "media" ],
         "parameters" : [ {
@@ -200,7 +200,8 @@
         "required" : [ "url" ],
         "properties" : {
           "url" : {
-            "type" : "array"
+            "type" : "string",
+            "confidence": "float"
           }
         }
       }
