@@ -116,11 +116,11 @@
       "get" : {
         "tags" : [ "media" ],
         "parameters" : [ {
-          "in" : "query",
-          "name" : "labels",
+          "in" : "formData",
+          "name" : "image",
           "required" : false,
           "schema" : {
-            "type" : "string"
+            "type" : "file"
           }
         } ],
         "responses" : {
