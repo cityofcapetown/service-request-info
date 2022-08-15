@@ -36,9 +36,8 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "array",
                   "items" : {
-                    "$ref":  "#/components/schemas/ServiceRequestSchema"
+                    "$ref" : "#/components/schemas/ServiceRequestSchema"
                   }
                 }
               }
@@ -131,7 +130,7 @@
                 "schema" : {
                   "type" : "array",
                   "items" : {
-                    "$ref":  "#/components/schemas/ServiceRequestSchema"
+                    "$ref" : "#/components/schemas/ImageRecognitionSchema"
                   }
                 }
               }
