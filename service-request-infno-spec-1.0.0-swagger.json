@@ -1,206 +1,266 @@
 {
-  "openapi" : "3.0.0",
-  "info" : {
-    "description" : "This is a radically open, non-authed API intended to provide information to the residents of Cape Town",
-    "version" : "1.0.0",
-    "title" : "Service Request Info API",
-    "license" : {
-      "name" : "Apache 2.0",
-      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+  "openapi": "3.0.0",
+  "info": {
+    "description": "This is a radically open, non-authed API intended to provide information on service requests to the residents of Cape Town",
+    "version": "1.0.0",
+    "title": "Service Request Info API",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   },
-  "tags" : [ {
-    "name" : "3rd_parties"
-  }, {
-    "name" : "media"
-  } ],
-  "paths" : {
-    "/service-request/status/" : {
-      "get" : {
-        "tags" : [ "3rd_parties" ],
-        "summary" : "Get service request API Info",
-        "parameters" : [ {
-          "in" : "query",
-          "name" : "service_request_no",
-          "description" : "maximum number of records to return",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "minimum" : 0,
-            "maximum" : 10
+  "tags": [
+    {
+      "name": "service_request_info"
+    },
+    {
+      "name": "classification"
+    }
+  ],
+  "paths": {
+    "/v1/service-request/status/": {
+      "get": {
+        "tags": [
+          "service_request_info"
+        ],
+        "summary": "Get the status of a particular service request",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "service_request_no",
+            "description": "Unique identifier of service request",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minimum": 10,
+              "maximum": 10,
+              "example": "987654567"
+            }
           }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "items" : {
-                    "$ref" : "#/components/schemas/ServiceRequestSchema"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ServiceRequestSchema"
                   }
                 }
               }
             }
           },
-          "400" : {
-            "description" : "bad input parameter"
+          "400": {
+            "description": "One of the input parameters don't make sense"
           },
-          "404" : {
-            "description" : "Page Not Found"
+          "404": {
+            "description": "This SR doesn't appear to exist"
           },
-          "500" : {
-            "description" : "Internal Server Error"
+          "500": {
+            "description": "Something has gone wrong with our server"
           },
-          "502" : {
-            "description" : "Bad Gateway Error"
+          "502": {
+            "description": "We can't talk to the City's SR API"
           },
-          "503" : {
-            "description" : "Service Unavailable Error"
+          "503": {
+            "description": "We can't handle your request right now"
           }
         }
       }
     },
-    "/service-request/stats/" : {
-      "get" : {
-        "tags" : [ "3rd_parties" ],
-        "parameters" : [ {
-          "in" : "query",
-          "name" : "area",
-          "required" : false,
-          "schema" : {
-            "type" : "string"
+    "/v1/service-request/stats/": {
+      "get": {
+        "tags": [
+          "service_request_info"
+        ],
+        "summary": "Get statistical information on service requests for a given area and type",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "area",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "Simon's Town"
+            }
+          },
+          {
+            "in": "query",
+            "name": "type_identifier",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
           }
-        }, {
-          "in" : "query",
-          "name" : "type_identifier",
-          "required" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/AreaSchema"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ServiceRequestStatsSchema"
                   }
                 }
               }
             }
           },
-          "400" : {
-            "description" : "bad input parameter"
+          "400": {
+            "description": "One of the input parameters don't make sense"
           },
-          "404" : {
-            "description" : "Page Not Found"
+          "404": {
+            "description": "Either that area or type doesn't appear to exist"
           },
-          "500" : {
-            "description" : "Internal Server Error"
+          "500": {
+            "description": "Something has gone wrong with our server"
           },
-          "502" : {
-            "description" : "Bad Gateway Error"
+          "502": {
+            "description": "We can't talk to a server we rely upon"
           },
-          "503" : {
-            "description" : "Service Unavailable Error"
+          "503": {
+            "description": "We can't handle your request right now"
           }
         }
       }
     },
-    "/service-request/image_classification/" : {
-      "get" : {
-        "tags" : [ "media" ],
-        "parameters" : [ {
-          "in" : "formData",
-          "name" : "image",
-          "required" : false,
-          "schema" : {
-            "type" : "file"
+    "/dev/service-request/image_classification/": {
+      "post": {
+        "tags": [
+          "classification"
+        ],
+        "summary": "Warning! Experimental endpoint for image classification",
+        "requestBody": {
+          "content": {
+            "image/png": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            },
+            "image/jpeg": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
           }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/ImageRecognitionSchema"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ImageRecognitionSchema"
                   }
                 }
               }
             }
           },
-          "500" : {
-            "description" : "Internal Server Error"
+          "500": {
+            "description": "Something has gone wrong with our server"
           }
         }
       }
     }
   },
-  "components" : {
-    "schemas" : {
-      "ServiceRequestSchema" : {
-        "type" : "object",
-        "required" : [ "id", "sr_status", "type", "suburb" ],
-        "properties" : {
-          "id" : {
-            "type" : "string",
-            "format" : "uuid",
-            "example" : "d290f1ee-6c54-4b01-90e6-d701748f0851"
+  "components": {
+    "schemas": {
+      "ServiceRequestSchema": {
+        "type": "object",
+        "required": [
+          "id",
+          "sr_status",
+          "type",
+          "subtype",
+          "message"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
           },
-          "sr_status" : {
-            "type" : "string",
-            "example" : 987654567
+          "sr_status": {
+            "type": "string",
+            "example": "987654567"
           },
-          "type" : {
-            "type" : "string"
+          "message": {
+            "type": "string"
           },
-          "suburb" : {
-            "type" : "string"
+          "type": {
+            "type": "string"
+          },
+          "subtype": {
+            "type": "string"
+          },
+          "suburb": {
+            "type": "string"
+          },
+          "latitude": {
+            "type": "number"
+          },
+          "longitude": {
+            "type": "number"
           }
         }
       },
-      "AreaSchema" : {
-        "required" : [ "area_stats" ],
-        "properties" : {
-          "name" : {
-            "type" : "string"
+      "ServiceRequestStatsSchema": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "area_stats": {
+            "type": "object",
+            "properties": {
+              "count": {
+                "type": "integer"
+              },
+              "open": {
+                "type": "integer"
+              },
+              "duration_p50": {
+                "type": "integer"
+              },
+              "heatmap_link": {
+                "type": "string",
+                "format": "url"
+              },
+              "last_updated": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
           }
         }
       },
-      "StatsSchema" : {
-        "required" : [ "count", "open", "duration_p50", "heatmap_link", "last_updated" ],
-        "properties" : {
-          "count" : {
-            "type" : "integer"
+      "ImageRecognitionSchema": {
+        "required": [
+          "type",
+          "subtype",
+          "confidence"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
           },
-          "open" : {
-            "type" : "integer"
+          "subtype": {
+            "type": "string"
           },
-          "duration_p50" : {
-            "type" : "integer"
+          "description": {
+            "type": "string"
           },
-          "heatmap_link" : {
-            "type" : "string"
+          "url": {
+            "type": "string",
+            "format": "url"
           },
-          "last_updated" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }
-      },
-      "ImageRecognitionSchema" : {
-        "required" : [ "url" ],
-        "properties" : {
-          "url" : {
-            "type" : "string",
-            "confidence": "float"
+          "confidence": {
+            "type": "number"
           }
         }
       }
