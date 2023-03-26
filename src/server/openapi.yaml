@@ -1,0 +1,238 @@
+openapi: 3.0.0
+info:
+  description: "This is a radically open, non-authed API intended to provide information\
+    \ on service requests to the residents of Cape Town"
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Service Request Info API
+  version: 1.0.0
+servers:
+- url: /
+tags:
+- name: service_request_info
+- name: classification
+paths:
+  /v1/service-request/status/:
+    get:
+      parameters:
+      - description: Unique identifier of service request
+        explode: true
+        in: query
+        name: service_request_no
+        required: true
+        schema:
+          example: "987654567"
+          maximum: 10
+          minimum: 10
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ServiceRequestSchema'
+                type: array
+          description: OK
+        "400":
+          description: One of the input parameters don't make sense
+        "404":
+          description: This SR doesn't appear to exist
+        "500":
+          description: Something has gone wrong with our server
+        "502":
+          description: We can't talk to the City's SR API
+        "503":
+          description: We can't handle your request right now
+      summary: Get the status of a particular service request
+      tags:
+      - service_request_info
+  /v1/service-request/stats/:
+    get:
+      parameters:
+      - explode: true
+        in: query
+        name: area
+        required: false
+        schema:
+          example: Simon's Town
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: type_identifier
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ServiceRequestStatsSchema'
+                type: array
+          description: OK
+        "400":
+          description: One of the input parameters don't make sense
+        "404":
+          description: Either that area or type doesn't appear to exist
+        "500":
+          description: Something has gone wrong with our server
+        "502":
+          description: We can't talk to a server we rely upon
+        "503":
+          description: We can't handle your request right now
+      summary: Get statistical information on service requests for a given area and
+        type
+      tags:
+      - service_request_info
+  /dev/service-request/image_classification/:
+    post:
+      requestBody:
+        content:
+          image/png:
+            schema:
+              format: binary
+              type: string
+          image/jpeg:
+            schema:
+              format: binary
+              type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ImageRecognitionSchema'
+                type: array
+          description: OK
+        "500":
+          description: Something has gone wrong with our server
+      summary: Warning! Experimental endpoint for image classification
+      tags:
+      - classification
+components:
+  schemas:
+    ServiceRequestSchema:
+      example:
+        sr_status: "987654567"
+        subtype: subtype
+        latitude: 0.8008281904610115
+        suburb: suburb
+        id: d290f1ee-6c54-4b01-90e6-d701748f0851
+        message: message
+        type: type
+        longitude: 6.027456183070403
+      properties:
+        id:
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+          format: uuid
+          title: id
+          type: string
+        sr_status:
+          example: "987654567"
+          title: sr_status
+          type: string
+        message:
+          title: message
+          type: string
+        type:
+          title: type
+          type: string
+        subtype:
+          title: subtype
+          type: string
+        suburb:
+          title: suburb
+          type: string
+        latitude:
+          title: latitude
+          type: number
+        longitude:
+          title: longitude
+          type: number
+      required:
+      - id
+      - message
+      - sr_status
+      - subtype
+      - type
+      title: ServiceRequestSchema
+      type: object
+    ServiceRequestStatsSchema:
+      example:
+        name: name
+        area_stats:
+          last_updated: 2000-01-23T04:56:07.000+00:00
+          count: 0
+          duration_p50: 1
+          heatmap_link: http://example.com/aeiou
+          open: 6
+      properties:
+        name:
+          title: name
+          type: string
+        area_stats:
+          $ref: '#/components/schemas/ServiceRequestStatsSchema_area_stats'
+      title: ServiceRequestStatsSchema
+    ImageRecognitionSchema:
+      example:
+        subtype: subtype
+        confidence: 0.8008281904610115
+        description: description
+        type: type
+        url: http://example.com/aeiou
+      properties:
+        type:
+          title: type
+          type: string
+        subtype:
+          title: subtype
+          type: string
+        description:
+          title: description
+          type: string
+        url:
+          format: url
+          title: url
+          type: string
+        confidence:
+          title: confidence
+          type: number
+      required:
+      - confidence
+      - subtype
+      - type
+      title: ImageRecognitionSchema
+    ServiceRequestStatsSchema_area_stats:
+      example:
+        last_updated: 2000-01-23T04:56:07.000+00:00
+        count: 0
+        duration_p50: 1
+        heatmap_link: http://example.com/aeiou
+        open: 6
+      properties:
+        count:
+          title: count
+          type: integer
+        open:
+          title: open
+          type: integer
+        duration_p50:
+          title: duration_p50
+          type: integer
+        heatmap_link:
+          format: url
+          title: heatmap_link
+          type: string
+        last_updated:
+          format: date-time
+          title: last_updated
+          type: string
+      title: ServiceRequestStatsSchema_area_stats
+      type: object
